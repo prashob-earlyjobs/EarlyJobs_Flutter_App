@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:earlyjobs/Constants/constants.dart';
 import 'package:earlyjobs/Model/applyjobmodel.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer';
 
 class JobsApi {
   static listjobs(int page, String searchkey) async {
@@ -83,7 +82,7 @@ class JobsApi {
         body: jsonEncode(applicationData),
       );
 
-      print('Response: ${response.body}');
+      log('Response: ${response.body}');
 
       if (response.statusCode == 200) {
         // print('POST request successful');

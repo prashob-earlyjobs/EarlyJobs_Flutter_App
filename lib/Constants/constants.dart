@@ -26,7 +26,7 @@ const razorpayApi = 'rzp_live_PNPMTHxTD7OmWY'; // goformeet Live
 // const apiUrl = 'https://goformeet-backend.onrender.com';
 
 const apiUrl =
-    'https://07mz59w9ch.execute-api.ap-south-1.amazonaws.com/prod/api';
+    'https://apis.earlyjobs.in/api';
 
 const placeholderimage =
     'https://firebasestorage.googleapis.com/v0/b/connectionapp-8dc63.appspot.com/o/StockImages%2Fplace_holder_User.png?alt=media&token=e2a0c339-f981-4824-b5fe-d395cf066ae4';

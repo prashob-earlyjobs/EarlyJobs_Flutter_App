@@ -1,22 +1,90 @@
 // api_service.dart
-import 'package:earlyjobs/Constants/constants.dart';
-import 'package:http/http.dart' as http;
+// api_service.dart
 import 'dart:convert';
+import 'dart:developer' as dev;
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:earlyjobs/constants/constants.dart';
+
+// Simple models ─ adjust to your needs
+class Job {
+  Job.fromJson(Map<String, dynamic> json) : data = json;
+  final Map<String, dynamic> data;
+}
+
+class JobResponse {
+  JobResponse.fromJson(Map<String, dynamic> json)
+      : jobs        = (json['jobs'] as List).map((e) => Job.fromJson(e)).toList(),
+        totalCount  = json['count'] as int;
+
+  final List<Job> jobs;
+  final int       totalCount;
+}
 
 class ApiService {
-  fetchData(int page, String query) async {
-    final response = await http
-        .get(Uri.parse('$apiUrl/public/jobs?search=$query&page=$page'));
+  ApiService([http.Client? client]) : _client = client ?? http.Client();
 
-    // print(response.body);
+  // ───────────────────────────────────────────────────────── fetch ONE page
+  Future<JobResponse> fetchPage({
+    required int page,
+    required String query,
+  }) async {
+    final url = Uri.parse('$apiUrl/public/jobs?search=$query&page=$page');
+    dev.log('➡️  Requesting page=$page | query="$query"', name: 'ApiService');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load data');
+    final res = await _client
+        .get(url)
+        .timeout(const Duration(seconds: 10));
+
+    dev.log('⬅️  Status=${res.statusCode}', name: 'ApiService');
+
+    if (res.statusCode == 200) {
+      return JobResponse.fromJson(jsonDecode(res.body));
     }
+    throw HttpException('Failed to load jobs | code=${res.statusCode}');
   }
+
+  // ─────────────────────────────────────────────────────── fetch ALL pages
+  Future<List<Job>> fetchAll({
+    required String query,
+    int startPage = 1,
+    int pageSize  = 20,     // API default page size
+    int maxPages  = 50,     // safety valve
+  }) async {
+    final List<Job> allJobs = [];
+    var currentPage = startPage;
+
+    while (currentPage <= maxPages) {
+      final pageResult = await fetchPage(page: currentPage, query: query);
+
+      allJobs.addAll(pageResult.jobs);
+      dev.log(
+        '📄  Page $currentPage fetched: '
+            '${pageResult.jobs.length} jobs '
+            '(total so far: ${allJobs.length}/${pageResult.totalCount})',
+        name: 'ApiService',
+      );
+
+      final gotEverything = allJobs.length >= pageResult.totalCount;
+      final lastPage      = pageResult.jobs.length < pageSize;
+
+      if (gotEverything || lastPage) {
+        dev.log('✅  Finished pagination – ${allJobs.length} jobs retrieved',
+            name: 'ApiService');
+        break;
+      }
+      currentPage++;
+    }
+    return allJobs;
+  }
+
+  // ────────────────────────────────────────────────────────────── clean-up
+  void dispose() => _client.close();
+
+  final http.Client _client;
 }
+
 
 
 
