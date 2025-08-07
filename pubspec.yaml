@@ -57,6 +57,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   rename: ^3.0.2
   flutter_html: ^3.0.0-beta.2
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +93,7 @@ flutter:
     - lib/Assets/india_flag.png
     - lib/Assets/Courousal_1_2.png
     - lib/Assets/logoplaceholder.png
+    - lib/Assets/EJ Logo.png
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

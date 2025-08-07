@@ -12,6 +12,8 @@ const ksecondarycolor = Color.fromARGB(255, 250, 199, 131);
 const kreddishcolor = Color.fromARGB(255, 255, 51, 0);
 const ksecondarycolorwhiteshade = Color.fromARGB(255, 255, 237, 213);
 const kChatbgColor = Color.fromARGB(255, 229, 249, 211);
+const kVeryLightOrangeBg = Color.fromARGB(255, 255, 253, 250);
+
 
 // const mapApiKey = 'AIzaSyAUpBcAlr_-YkPuSB2yyhmi4JETpshuJdI'; //designMyhouse
 

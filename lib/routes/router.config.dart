@@ -1,3 +1,4 @@
+import 'package:earlyjobs/View/Onboarding/welcomeScreen.dart';
 import 'package:earlyjobs/routes/routes_constant.dart' show Routes;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +75,11 @@ class EarlyJobsAppRoutes {
           final JobsModel jobData = state.extra as JobsModel;
           return PersonalInformationForm(passinngJobData: jobData);
         },
+      ),
+      GoRoute(
+        path: Routes.welcomeScreen.path,
+        name: Routes.welcomeScreen.name,
+        builder: (BuildContext context, GoRouterState state) => WelcomeScreen(),
       ),
     ],
   );
