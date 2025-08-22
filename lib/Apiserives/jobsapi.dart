@@ -7,7 +7,7 @@ import 'dart:developer';
 
 class JobsApi {
   static listjobs(int page, String searchkey) async {
-    String apiendpoint = '$apiUrl/public/jobs?search=$searchkey&page=$page';
+    String apiendpoint = '$baseUrl/public/jobs?search=$searchkey&page=$page';
 
     // Construct the request body
     // Map<String, dynamic> body = {
@@ -50,7 +50,7 @@ class JobsApi {
 
   static postJob(ApplyjobData jobData) async {
     const String apiendpoint =
-        '$apiUrl/public/jobs'; // Replace with your actual API endpoint
+        '$baseUrl/public/jobs'; // Replace with your actual API endpoint
 
     Map<String, dynamic> applicationData = {
       'jobId': jobData.jobId,

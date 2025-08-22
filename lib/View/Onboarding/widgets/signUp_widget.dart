@@ -1,8 +1,11 @@
 import 'package:earlyjobs/Constants/constants.dart';
 import 'package:earlyjobs/Controller/authcontroller.dart';
+import 'package:earlyjobs/View/Onboarding/widgets/otpPopUp.dart';
 import 'package:earlyjobs/View/widgets/snackbar.dart';
+import 'package:earlyjobs/routes/routes_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpWidget extends StatelessWidget {
   final AuthController controller = Get.find();
@@ -231,13 +234,17 @@ class SignUpWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     final error = controller.validateSignupFields();
                     if (error != null && error.isNotEmpty) {
-                      CustomSnackbarManager.showError(context, error); // show single error
+                      CustomSnackbarManager.to.showError(context, error);
                       return;
                     }
-                    // Otherwise proceed with form submission / signup logic
+                    final sendOtpSuccess = await controller.sendOtp(context);
+                    if (sendOtpSuccess) {
+                      CustomSnackbarManager.to.showError(context, "OTP has been sent to your mobile and email.");
+                      showOtpDialog(context, controller);  // Show OTP popup dialog here
+                    }
                   },
                   child: const Text(
                     'Create Account',

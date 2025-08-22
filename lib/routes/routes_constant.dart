@@ -30,5 +30,4 @@ class Routes {
       name: "welcome_screen",
       path: "/welcome"
   );
-
 }

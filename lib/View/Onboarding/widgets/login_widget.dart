@@ -1,9 +1,11 @@
 import 'package:earlyjobs/Constants/constants.dart';
 import 'package:earlyjobs/Controller/authcontroller.dart';
 import 'package:earlyjobs/View/widgets/snackbar.dart';
+import 'package:earlyjobs/routes/routes_constant.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginWidget extends StatelessWidget {
   final AuthController controller = Get.find();
@@ -120,18 +122,20 @@ class LoginWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final value = controller.loginEmailOrPhoneController.text;
                   final password = controller.loginPasswordController.text;
-                  final errMsg = controller.validateLoginCredentials(value,password);
+                  final errMsg = controller.validateLoginCredentials(value, password);
 
                   if (errMsg != null) {
-                    CustomSnackbarManager.showError(
-                        context, errMsg); // using our custom snackbar
+                    CustomSnackbarManager.to.showError(context, errMsg);
                     return;
                   }
-
-                  // continue login logic...
+                  final loginSuccess = await controller.login(context);
+                  if (loginSuccess) {
+                    // Navigate to home screen on successful login using GoRouter
+                    GoRouter.of(context).go(Routes.homeScreen.path);
+                  }
                 },
                 child: const Text(
                   'Sign In',

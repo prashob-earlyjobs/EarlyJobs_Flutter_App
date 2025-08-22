@@ -14,11 +14,6 @@ const ksecondarycolorwhiteshade = Color.fromARGB(255, 255, 237, 213);
 const kChatbgColor = Color.fromARGB(255, 229, 249, 211);
 const kVeryLightOrangeBg = Color.fromARGB(255, 255, 253, 250);
 
-
-// const mapApiKey = 'AIzaSyAUpBcAlr_-YkPuSB2yyhmi4JETpshuJdI'; //designMyhouse
-
-const mapApiKey = 'AIzaSyB5KPXUc3hzw5qmNUhBre2RYY8UkulA6JI'; // bestBuyhub
-
 // const razorpayApi = 'rzp_live_AtQd6lTECWHAcV'; // Sale@victman Live
 
 const razorpayApi = 'rzp_live_PNPMTHxTD7OmWY'; // goformeet Live
@@ -27,8 +22,9 @@ const razorpayApi = 'rzp_live_PNPMTHxTD7OmWY'; // goformeet Live
 
 // const apiUrl = 'https://goformeet-backend.onrender.com';
 
-const apiUrl =
-    'https://apis.earlyjobs.in/api';
+const apiUrl = 'https://apis.earlyjobs.ai/api';
+const baseUrl= 'https://apis.earlyjobs.in/api';
+
 
 const placeholderimage =
     'https://firebasestorage.googleapis.com/v0/b/connectionapp-8dc63.appspot.com/o/StockImages%2Fplace_holder_User.png?alt=media&token=e2a0c339-f981-4824-b5fe-d395cf066ae4';

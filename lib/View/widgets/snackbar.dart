@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'dart:async';
 
-/// Manages the display and lifecycle of custom snackbars.
-/// It ensures that a maximum of 3 snackbars are visible at any time.
-class CustomSnackbarManager {
-  // A list to keep track of the currently active snackbars.
-  static final List<_ActiveSnackbar> _activeSnackbars = [];
-  // The maximum number of snackbars that can be displayed simultaneously.
+class CustomSnackbarManager extends GetxController {
+  // Reactive list of active snackbars (max 3 at a time)
+  final RxList<_ActiveSnackbar> _activeSnackbars = <_ActiveSnackbar>[].obs;
+
+  static CustomSnackbarManager get to => Get.find<CustomSnackbarManager>();
+
   static const int _maxSnackbars = 3;
 
-  /// Displays a custom error snackbar.
-  /// If the maximum number of snackbars is already displayed, it removes the oldest one.
-  static void showError(BuildContext context, String message) {
-    // If we've reached the max number of snackbars, remove the oldest one.
+  void showError(BuildContext context, String message) {
+    // If we already have 3, remove the first one
     if (_activeSnackbars.length >= _maxSnackbars) {
-      final oldestSnackbar = _activeSnackbars.removeAt(0);
-      oldestSnackbar.remove();
+      final oldest = _activeSnackbars.removeAt(0);
+      oldest.remove();
     }
 
-    // We need a reference to the OverlayEntry to manage its lifecycle.
     OverlayEntry? entry;
-
-    // The callback to be executed when the snackbar is dismissed.
     void onDismissed() {
+      // Remove from list
       _activeSnackbars.removeWhere((s) => s.entry == entry);
+      // Safely remove overlay
       if (entry?.mounted ?? false) {
         entry?.remove();
       }
-      // Trigger a rebuild of the overlay to update the positions and scales of remaining snackbars.
-      Overlay.of(context).setState(() {});
     }
 
     entry = OverlayEntry(
-      builder: (ctx) => _CustomSnackbarWidget(
+      builder: (_) => _CustomSnackbarWidget(
         entry: entry!,
         message: message,
         onDismissed: onDismissed,
@@ -40,19 +36,17 @@ class CustomSnackbarManager {
     );
 
     _activeSnackbars.add(_ActiveSnackbar(entry: entry));
-    // We call setState to animate the other snackbars when a new one is added.
-    Overlay.of(context).insert(entry);
-    Overlay.of(context).setState(() {});
+    Overlay.of(context).insert(entry!);
   }
+
+  // Getter for UI access (for rebuilding with Obx)
+  List<_ActiveSnackbar> get activeSnackbars => _activeSnackbars;
 }
 
-/// A helper class to hold a reference to an active OverlayEntry.
 class _ActiveSnackbar {
   final OverlayEntry entry;
-
   _ActiveSnackbar({required this.entry});
 
-  /// Removes the snackbar's OverlayEntry from the overlay.
   void remove() {
     if (entry.mounted) {
       entry.remove();
@@ -60,7 +54,7 @@ class _ActiveSnackbar {
   }
 }
 
-/// The actual widget that displays the snackbar content and handles animations.
+// ===== Snackbar Widget =====
 class _CustomSnackbarWidget extends StatefulWidget {
   final OverlayEntry entry;
   final String message;
@@ -90,11 +84,13 @@ class _CustomSnackbarWidgetState extends State<_CustomSnackbarWidget>
       duration: const Duration(milliseconds: 350),
       vsync: this,
     );
-
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 2.0), // Start further down for a better effect
+      begin: const Offset(0, 2.0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
 
     _slideController.forward();
 
@@ -116,18 +112,18 @@ class _CustomSnackbarWidgetState extends State<_CustomSnackbarWidget>
 
   @override
   Widget build(BuildContext context) {
-    final activeSnackbars = CustomSnackbarManager._activeSnackbars;
-    final index = activeSnackbars.indexWhere((s) => s.entry == widget.entry);
-    final isTopmost = index == activeSnackbars.length - 1;
+    // Find index reactively
+    final manager = CustomSnackbarManager.to;
+    final index = manager.activeSnackbars
+        .indexWhere((s) => s.entry == widget.entry);
 
-    if (index == -1) {
-      return const SizedBox.shrink();
-    }
+    if (index == -1) return const SizedBox.shrink();
 
-    // Calculate properties based on the snackbar's position in the stack
-    final scale = 1.0 - (activeSnackbars.length - 1 - index) * 0.05;
+    final isTopmost = index == manager.activeSnackbars.length - 1;
+    final scale = 1.0 - (manager.activeSnackbars.length - 1 - index) * 0.05;
     final bottomOffset = 10.0 + (index * 10.0);
-    final horizontalPadding = 16.0 + (activeSnackbars.length - 1 - index) * 10.0;
+    final horizontalPadding =
+        16.0 + (manager.activeSnackbars.length - 1 - index) * 10.0;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 200),
@@ -140,7 +136,9 @@ class _CustomSnackbarWidgetState extends State<_CustomSnackbarWidget>
         scale: scale,
         child: SlideTransition(
           position: _slideAnimation,
-          child: isTopmost ? _buildSnackbarContent() : IgnorePointer(child: _buildSnackbarContent()),
+          child: isTopmost
+              ? _buildSnackbarContent()
+              : IgnorePointer(child: _buildSnackbarContent()),
         ),
       ),
     );
