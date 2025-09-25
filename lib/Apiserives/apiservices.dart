@@ -1,13 +1,10 @@
 // api_service.dart
-// api_service.dart
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
 
+import 'package:earlyjobs/Constants/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:earlyjobs/constants/constants.dart';
-
-// Simple models ─ adjust to your needs
 class Job {
   Job.fromJson(Map<String, dynamic> json) : data = json;
   final Map<String, dynamic> data;
@@ -30,7 +27,7 @@ class ApiService {
     required int page,
     required String query,
   }) async {
-    final url = Uri.parse('$apiUrl/public/jobs?search=$query&page=$page');
+    final url = Uri.parse('$baseUrl/public/jobs?search=$query&page=$page');
     dev.log('➡️  Requesting page=$page | query="$query"', name: 'ApiService');
 
     final res = await _client

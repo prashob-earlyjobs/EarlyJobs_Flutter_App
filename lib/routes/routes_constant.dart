@@ -26,4 +26,8 @@ class Routes {
       name: "job_application_screen",
       path: "/jobApplication/:jobId"
   );
+  static const RouteName welcomeScreen = RouteName(
+      name: "welcome_screen",
+      path: "/welcome"
+  );
 }

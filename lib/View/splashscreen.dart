@@ -92,8 +92,7 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> gotoLogin() async {
-    // print('objectlogin');
-   await Future.delayed(const Duration(seconds: 2));
-    context.go('/homeScreen');
+    await Future.delayed(const Duration(seconds: 2));
+    context.go('/welcome');
   }
 }
