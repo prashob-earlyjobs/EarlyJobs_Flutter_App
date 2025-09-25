@@ -33,6 +33,19 @@ android {
     }
 
     sourceSets["main"].java.srcDirs("src/main/kotlin")
+
+
+    flavorDimensions += "env"
+    productFlavors {
+    create("development") {
+        dimension = "env"
+        applicationIdSuffix = ".dev"
+        versionNameSuffix = "-dev"
+    }
+    create("production") {
+        dimension = "env"
+    }
+}
 }
 
 flutter {
